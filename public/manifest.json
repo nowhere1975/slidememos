@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "Slidememos",
+  "version": "0.4.0",
+  "description": "A lightweight note-taking tool in browser side panel",
+  "permissions": [
+    "sidePanel",
+    "activeTab",
+    "storage",
+    "scripting"
+  ],
+  "action": {
+    "default_title": "Open Slidememos"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
+  },
+  "background": {
+    "service_worker": "background.js",
+    "type": "module"
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

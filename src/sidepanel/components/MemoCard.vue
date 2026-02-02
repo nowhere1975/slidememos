@@ -288,6 +288,15 @@ function handleContentKeydown(e: KeyboardEvent) {
       <time class="card-date">{{ formattedDate }}</time>
       <!-- Edit actions when editing -->
       <div v-if="editingField" class="edit-actions" @click.stop>
+        <!-- Copy button when text is selected (also shown in editing mode) -->
+        <button
+          v-if="showCopyButton"
+          class="copy-btn"
+          :title="t('copy')"
+          @click="copySelectedText"
+        >
+          <Clipboard :size="14" />
+        </button>
         <button class="btn-cancel" @click="cancelEdit">{{ t('cancel') }}</button>
         <button
           class="btn-save"

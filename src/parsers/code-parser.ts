@@ -33,6 +33,11 @@ export function detectCodeLanguage(content: string): string {
   // Find highest scoring language
   const sorted = Object.entries(scores).sort((a, b) => b[1] - a[1])
 
+  // If both TypeScript and JavaScript have scores, prefer TypeScript
+  if (scores.typescript > 0 && scores.javascript > 0) {
+    return 'typescript'
+  }
+
   if (sorted[0] && sorted[0][1] > 0) {
     return sorted[0][0]
   }

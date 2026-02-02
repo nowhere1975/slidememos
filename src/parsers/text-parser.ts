@@ -36,7 +36,8 @@ function hasMarkdownPatterns(content: string): boolean {
     /\*\*[^*]+\*\*/, // Bold
     /\*[^*]+\*/, // Italic
     /\[[^\]]+\]\([^)]+\)/, // Links
-    /^[-*]\s/m, // Lists
+    /^[-*]\s/m, // Unordered lists
+    /^\d+\.\s/m, // Ordered lists
     /^```/m, // Code blocks
     /`[^`]+`/, // Inline code
   ]

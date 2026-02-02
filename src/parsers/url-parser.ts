@@ -70,9 +70,10 @@ function fallbackParse(url: string): URLParseResult {
 
 /** Parse URL from active tab using scripting API (P1 strategy) */
 export async function parseActiveTab(): Promise<URLParseResult & { url: string }> {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true })
+  const tabs = await chrome.tabs.query({ active: true, currentWindow: true })
+  const tab = tabs[0]
 
-  if (!tab.id || !tab.url) {
+  if (!tab?.id || !tab.url) {
     throw new Error('No active tab')
   }
 

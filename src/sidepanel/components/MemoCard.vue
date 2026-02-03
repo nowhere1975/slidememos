@@ -226,6 +226,13 @@ function handleContentKeydown(e: KeyboardEvent) {
     saveContent()
   }
 }
+
+function openLink() {
+  const url = props.memo.metadata?.url
+  if (url) {
+    chrome.tabs.create({ url, active: false })
+  }
+}
 </script>
 
 <template>
@@ -235,7 +242,11 @@ function handleContentKeydown(e: KeyboardEvent) {
     :class="{ 'is-highlighted': isHighlighted, 'is-editing': editingField !== null, 'is-collapsed': isCollapsed }"
   >
     <header class="card-header">
-      <span class="type-icon">{{ typeIcon }}</span>
+      <span
+        class="type-icon"
+        :class="{ 'is-link': memo.type === 'url' }"
+        @click.stop="memo.type === 'url' && openLink()"
+      >{{ typeIcon }}</span>
       <!-- Title: View or Edit -->
       <h3
         v-if="editingField !== 'title'"
@@ -288,15 +299,6 @@ function handleContentKeydown(e: KeyboardEvent) {
       <time class="card-date">{{ formattedDate }}</time>
       <!-- Edit actions when editing -->
       <div v-if="editingField" class="edit-actions" @click.stop>
-        <!-- Copy button when text is selected (also shown in editing mode) -->
-        <button
-          v-if="showCopyButton"
-          class="copy-btn"
-          :title="t('copy')"
-          @click="copySelectedText"
-        >
-          <Clipboard :size="14" />
-        </button>
         <button class="btn-cancel" @click="cancelEdit">{{ t('cancel') }}</button>
         <button
           class="btn-save"
@@ -399,8 +401,21 @@ function handleContentKeydown(e: KeyboardEvent) {
   transition: transform 200ms ease-out;
 }
 
+.type-icon.is-link {
+  cursor: pointer;
+}
+
+.type-icon.is-link:hover {
+  transform: scale(1.2);
+  opacity: 0.8;
+}
+
 .memo-card:hover .type-icon {
   transform: scale(1.1);
+}
+
+.memo-card:hover .type-icon.is-link:hover {
+  transform: scale(1.2);
 }
 
 .card-title {

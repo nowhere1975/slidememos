@@ -1,8 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "Slidememos",
+  "name": "Slidememos - Side Panel Notes",
+  "short_name": "Slidememos",
   "version": "0.4.0",
-  "description": "A lightweight note-taking tool in browser side panel",
+  "description": "A lightweight note-taking tool in browser side panel. Capture ideas, URLs, and markdown notes instantly.",
   "permissions": [
     "sidePanel",
     "activeTab",
@@ -23,5 +24,7 @@
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
-  }
+  },
+  "author": "Slidememos Team",
+  "homepage_url": "https://github.com/yourusername/slidememos"
 }

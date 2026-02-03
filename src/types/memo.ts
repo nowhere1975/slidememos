@@ -1,5 +1,5 @@
 /** Memo type classification */
-export type MemoType = 'text' | 'url' | 'code'
+export type MemoType = 'text' | 'url'
 
 /** Memo metadata for URL and code types */
 export interface MemoMetadata {

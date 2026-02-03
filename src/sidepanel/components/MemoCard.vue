@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, ref, onMounted, onUnmounted, watch, nextTick } from 'vue'
-import { Eye, EyeOff, ChevronUp, ChevronDown, Trash2 } from 'lucide-vue-next'
+import { Eye, EyeOff, ChevronUp, ChevronDown, Trash2, Copy, Scissors, StickyNote, Link } from 'lucide-vue-next'
 import type { Memo } from '@/types'
 import { t } from '@/utils/i18n'
 import { deleteMemo, updateMemo } from '@/storage/engine'
@@ -30,6 +30,7 @@ const isSaving = ref(false)
 const titleInputRef = ref<HTMLInputElement>()
 const contentTextareaRef = ref<HTMLTextAreaElement>()
 const cardRef = ref<HTMLElement>()
+const showTextToolbar = ref(false)
 
 // Trigger highlight animation for new memos
 onMounted(() => {
@@ -99,17 +100,6 @@ const displayTitle = computed(() => {
 
 const formattedDate = computed(() => {
   return new Date(props.memo.updatedAt).toLocaleDateString()
-})
-
-const typeIcon = computed(() => {
-  switch (props.memo.type) {
-    case 'url':
-      return '🔗'
-    case 'code':
-      return '💻'
-    default:
-      return '📝'
-  }
 })
 
 function escapeRegex(str: string): string {
@@ -233,6 +223,52 @@ function openLink() {
     chrome.tabs.create({ url, active: false })
   }
 }
+
+function checkSelection() {
+  const textarea = contentTextareaRef.value
+  if (!textarea) return
+
+  const start = textarea.selectionStart
+  const end = textarea.selectionEnd
+  showTextToolbar.value = start !== end
+}
+
+async function copySelection() {
+  const textarea = contentTextareaRef.value
+  if (!textarea) return
+
+  const start = textarea.selectionStart
+  const end = textarea.selectionEnd
+  const text = editContent.value.slice(start, end)
+
+  await navigator.clipboard.writeText(text)
+  showTextToolbar.value = false
+  // Restore focus to textarea
+  textarea.focus()
+}
+
+function cutSelection() {
+  const textarea = contentTextareaRef.value
+  if (!textarea) return
+
+  const start = textarea.selectionStart
+  const end = textarea.selectionEnd
+  const text = editContent.value.slice(start, end)
+
+  // Copy to clipboard
+  navigator.clipboard.writeText(text)
+
+  // Remove selected text
+  editContent.value = editContent.value.slice(0, start) + editContent.value.slice(end)
+
+  // Move cursor to the cut position
+  nextTick(() => {
+    textarea.setSelectionRange(start, start)
+    textarea.focus()
+  })
+
+  showTextToolbar.value = false
+}
 </script>
 
 <template>
@@ -246,7 +282,10 @@ function openLink() {
         class="type-icon"
         :class="{ 'is-link': memo.type === 'url' }"
         @click.stop="memo.type === 'url' && openLink()"
-      >{{ typeIcon }}</span>
+      >
+        <Link v-if="memo.type === 'url'" :size="16" />
+        <StickyNote v-else :size="16" />
+      </span>
       <!-- Title: View or Edit -->
       <h3
         v-if="editingField !== 'title'"
@@ -275,8 +314,12 @@ function openLink() {
       </button>
     </header>
 
-    <!-- Content: View or Edit (hidden when collapsed) -->
-    <template v-if="!isCollapsed">
+    <!-- Content: View or Edit -->
+    <div
+      v-show="!isCollapsed"
+      class="content-wrapper"
+      :class="{ 'is-collapsed': isCollapsed }"
+    >
       <div
         v-if="editingField !== 'content'"
         class="card-content"
@@ -284,16 +327,40 @@ function openLink() {
         v-html="displayContent"
         @click="enterContentEdit"
       ></div>
-      <textarea
-        v-else
-        ref="contentTextareaRef"
-        v-model="editContent"
-        class="edit-textarea"
-        rows="3"
-        @keydown="handleContentKeydown"
-        @click.stop
-      ></textarea>
-    </template>
+      <div v-else class="edit-content-wrapper">
+        <!-- Floating toolbar for text selection -->
+        <div
+          v-if="showTextToolbar"
+          class="text-toolbar"
+          @click.stop
+        >
+          <button
+            class="toolbar-btn"
+            :title="t('copy')"
+            @click="copySelection"
+          >
+            <Copy :size="14" />
+          </button>
+          <button
+            class="toolbar-btn"
+            :title="t('cut')"
+            @click="cutSelection"
+          >
+            <Scissors :size="14" />
+          </button>
+        </div>
+        <textarea
+          ref="contentTextareaRef"
+          v-model="editContent"
+          class="edit-textarea"
+          rows="3"
+          @keydown="handleContentKeydown"
+          @mouseup="checkSelection"
+          @keyup="checkSelection"
+          @click.stop
+        ></textarea>
+      </div>
+    </div>
 
     <footer class="card-footer">
       <time class="card-date">{{ formattedDate }}</time>
@@ -397,7 +464,10 @@ function openLink() {
 }
 
 .type-icon {
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-secondary);
   transition: transform 200ms ease-out;
 }
 
@@ -486,6 +556,7 @@ function openLink() {
   border-radius: 4px;
   padding: 4px;
   margin: -4px;
+  user-select: none;
 }
 
 .card-content:hover {
@@ -568,6 +639,24 @@ function openLink() {
 
 .card-content.is-preview :deep(a) {
   color: var(--color-primary);
+}
+
+/* Content wrapper for collapse animation */
+.content-wrapper {
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out,
+    max-height 300ms ease-out;
+  opacity: 1;
+  transform: translateY(0);
+  max-height: 500px;
+  overflow: hidden;
+}
+
+.content-wrapper.is-collapsed {
+  opacity: 0;
+  transform: translateY(-10px);
+  max-height: 0;
 }
 
 .card-footer {
@@ -660,6 +749,50 @@ function openLink() {
 }
 
 /* Edit mode styles */
+.edit-content-wrapper {
+  position: relative;
+}
+
+.text-toolbar {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
+  gap: 4px;
+  padding: 4px 6px;
+  background: var(--color-bg);
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  animation: toolbar-fade-in 150ms ease-out;
+}
+
+@keyframes toolbar-fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toolbar-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  color: var(--color-text-secondary);
+  border-radius: 4px;
+  transition: all 150ms ease-out;
+}
+
+.toolbar-btn:hover {
+  background: var(--color-bg-secondary);
+  color: var(--color-text);
+}
+
 .edit-textarea {
   width: 100%;
   min-height: 60px;
@@ -674,6 +807,7 @@ function openLink() {
   background: transparent;
   outline: none;
 }
+
 
 .edit-actions {
   display: flex;

@@ -22,6 +22,8 @@ interface Translations {
   no: string
   showSource: string
   preview: string
+  copy: string
+  cut: string
 
   // Toast
   memoSaved: string
@@ -73,6 +75,8 @@ const zh: Translations = {
   no: '否',
   showSource: '显示源码',
   preview: '预览',
+  copy: '复制',
+  cut: '剪切',
 
   // Toast
   memoSaved: '已保存',
@@ -124,6 +128,8 @@ const en: Translations = {
   no: 'No',
   showSource: 'Show source',
   preview: 'Preview',
+  copy: 'Copy',
+  cut: 'Cut',
 
   // Toast
   memoSaved: 'Memo saved',

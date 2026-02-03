@@ -1,13 +1,9 @@
 import type { MemoMetadata, MemoType } from '@/types'
 import { parseURL } from './url-parser'
 import { parseText } from './text-parser'
-import { detectCodeLanguage } from './code-parser'
 
 /** URL pattern for detection */
 const URL_PATTERN = /^https?:\/\/[^\s]+$/
-
-/** Code block pattern */
-const CODE_PATTERN = /^```(\w+)?\n[\s\S]+\n```$/
 
 /** Parse input and determine type with metadata */
 export async function parseInput(
@@ -29,16 +25,6 @@ export async function parseInput(
     }
   }
 
-  // Check if code block
-  if (CODE_PATTERN.test(trimmed)) {
-    const language = detectCodeLanguage(trimmed)
-    return {
-      type: 'code',
-      title: `Code: ${language}`,
-      metadata: { language },
-    }
-  }
-
   // Default to text
   const textResult = parseText(trimmed)
   return {
@@ -50,4 +36,3 @@ export async function parseInput(
 
 export { parseURL } from './url-parser'
 export { parseText } from './text-parser'
-export { detectCodeLanguage } from './code-parser'

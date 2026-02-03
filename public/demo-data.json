@@ -33,7 +33,7 @@
     {
       "id": "demo-004",
       "title": "今日待办",
-      "content": "## 工作任务\n\n- [x] 完成 Slidememos 开发\n- [ ] 准备 Chrome 商店材料\n- [ ] 写隐私政策\n- [ ] 截图和录屏\n\n## 个人\n\n- [ ] 买咖啡豆\n- [ ] 预约牙医",
+      "content": "## 工作任务\n\n- [x] 完成 Slidememos 开发\n- [ ] 准备 Chrome 商店材料\n- [ ] 写隐私政策\n- [ ] 截图和录屏\n\n## 个人\n\n- [ ] 买咖啡豆",
       "type": "text",
       "metadata": {
         "isMarkdown": true
@@ -56,7 +56,7 @@
     {
       "id": "demo-006",
       "title": "TypeScript 类型技巧",
-      "content": "// 使用泛型创建可复用的类型\ntype ApiResponse<T> = {\n  data: T;\n  status: number;\n  message: string;\n};\n\n// 使用示例\ninterface User {\n  id: string;\n  name: string;\n}\n\nconst response: ApiResponse<User> = {\n  data: { id: '1', name: 'John' },\n  status: 200,\n  message: 'OK'\n};",
+      "content": "// 使用泛型创建可复用的类型\ntype ApiResponse<T> = {\n  data: T;\n  status: number;\n  message: string;\n};",
       "type": "text",
       "metadata": {},
       "createdAt": 1707321600000,

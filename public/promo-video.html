@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Slidememos Promo Video</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #0a0a0a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+
+    .video-container {
+      width: 1280px;
+      height: 800px;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* 装饰性光晕 */
+    .video-container::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -15%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(1.1); }
+    }
+
+    /* 主内容区 */
+    .content-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 80px;
+      z-index: 1;
+    }
+
+    /* 侧边栏 mockup */
+    .sidebar-mockup {
+      width: 320px;
+      height: 500px;
+      background: #f8fafc;
+      border-radius: 12px;
+      box-shadow:
+        0 10px 15px -3px rgba(0, 0, 0, 0.3),
+        0 4px 6px -2px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.1);
+      padding: 24px;
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateX(50px);
+      animation: slideIn 0.8s ease-out 0.5s forwards;
+    }
+
+    @keyframes slideIn {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .sidebar-header {
+      font-size: 20px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-divider {
+      height: 3px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      border-radius: 2px;
+      margin-bottom: 20px;
+      transform: scaleX(0);
+      transform-origin: left;
+      animation: expandWidth 0.6s ease-out 1.3s forwards;
+    }
+
+    @keyframes expandWidth {
+      to { transform: scaleX(1); }
+    }
+
+    .cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+    }
+
+    .card {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: transform 0.4s ease-out;
+    }
+
+    /* 旧卡片依次出现 */
+    .card:nth-child(2) { animation: cardAppear 0.5s ease-out 1.8s forwards; }
+    .card:nth-child(3) { animation: cardAppear 0.5s ease-out 2.2s forwards; }
+    .card:nth-child(4) { animation: cardAppear 0.5s ease-out 2.6s forwards; }
+
+    @keyframes cardAppear {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 旧卡片向下移动，为新卡片腾出空间 */
+    .card:nth-child(2),
+    .card:nth-child(3),
+    .card:nth-child(4) {
+      animation: cardAppear 0.5s ease-out 1.8s forwards,
+                 slideDown 0.4s ease-out 7s forwards;
+    }
+
+    .card:nth-child(3) {
+      animation: cardAppear 0.5s ease-out 2.2s forwards,
+                 slideDown 0.4s ease-out 7s forwards;
+    }
+
+    .card:nth-child(4) {
+      animation: cardAppear 0.5s ease-out 2.6s forwards,
+                 slideDown 0.4s ease-out 7s forwards;
+    }
+
+    @keyframes slideDown {
+      to {
+        transform: translateY(76px);
+      }
+    }
+
+    .card-icon {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-text {
+      font-size: 12px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 新卡片从上方滑入 */
+    .card.new-card {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      opacity: 0;
+      transform: translateY(-100px);
+      animation: newCardSlideIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55) 7.2s forwards;
+    }
+
+    .card.new-card .card-title,
+    .card.new-card .card-text {
+      color: white;
+    }
+
+    @keyframes newCardSlideIn {
+      0% {
+        opacity: 0;
+        transform: translateY(-100px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 右侧文案区 */
+    .text-content {
+      max-width: 500px;
+      color: white;
+    }
+
+    .main-title {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(90deg, #fff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease-out 3.5s forwards;
+    }
+
+    @keyframes fadeInUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .sub-title {
+      font-size: 28px;
+      font-weight: 300;
+      color: #e2e8f0;
+      line-height: 1.4;
+      margin-bottom: 32px;
+      opacity: 0;
+      letter-spacing: 0.5px;
+      font-style: italic;
+      animation: fadeInUp 0.8s ease-out 4s forwards;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 16px;
+      color: #cbd5e1;
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+
+    .feature-item:nth-child(1) { animation: slideInLeft 0.5s ease-out 4.5s forwards; }
+    .feature-item:nth-child(2) { animation: slideInLeft 0.5s ease-out 4.8s forwards; }
+    .feature-item:nth-child(3) { animation: slideInLeft 0.5s ease-out 5.1s forwards; }
+
+    @keyframes slideInLeft {
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .feature-dot {
+      width: 8px;
+      height: 8px;
+      background: #3b82f6;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
+    }
+
+    /* 打字机效果 */
+    .typing-text {
+      display: inline-block;
+      overflow: hidden;
+      white-space: nowrap;
+      border-right: 2px solid #3b82f6;
+      animation: typing 1.5s steps(20) 5s forwards, blink 0.75s step-end infinite;
+    }
+
+    @keyframes typing {
+      from { width: 0; }
+      to { width: 100%; border-right: none; }
+    }
+
+    @keyframes blink {
+      50% { border-color: transparent; }
+    }
+
+    /* CTA 按钮 */
+    .cta-button {
+      margin-top: 40px;
+      padding: 16px 32px;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      color: white;
+      font-size: 18px;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+      opacity: 0;
+      transform: scale(0.9);
+      animation: buttonPop 0.5s ease-out 8s forwards;
+    }
+
+    @keyframes buttonPop {
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+
+    /* 结束画面 */
+    .end-screen {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 100;
+      animation: fadeInEnd 1s ease-out 10s forwards;
+    }
+
+    @keyframes fadeInEnd {
+      to {
+        opacity: 1;
+        pointer-events: auto;
+      }
+    }
+
+    /* 隐藏主内容当结束画面出现时 */
+    .content-wrapper {
+      animation: fadeOutContent 0.5s ease-out 10s forwards;
+    }
+
+    @keyframes fadeOutContent {
+      to { opacity: 0; }
+    }
+
+    .end-logo {
+      font-size: 72px;
+      font-weight: 800;
+      background: linear-gradient(90deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 24px;
+    }
+
+    .end-tagline {
+      font-size: 24px;
+      color: #94a3b8;
+      margin-bottom: 40px;
+    }
+
+    .end-cta {
+      font-size: 18px;
+      color: #cbd5e1;
+      padding: 12px 24px;
+      border: 2px solid #3b82f6;
+      border-radius: 8px;
+    }
+
+    /* 控制提示 */
+    .controls {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      color: #666;
+      font-size: 14px;
+      z-index: 1000;
+    }
+
+    .controls kbd {
+      background: #333;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-family: monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-container">
+    <div class="content-wrapper">
+      <!-- 左侧侧边栏 mockup -->
+      <div class="sidebar-mockup">
+        <div class="sidebar-header">Slidememos</div>
+        <div class="sidebar-divider"></div>
+
+        <div class="cards-container">
+          <div class="card new-card">
+            <div class="card-icon">✨</div>
+            <div class="card-content">
+              <div class="card-title">新笔记</div>
+              <div class="card-text">刚刚添加</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">📝</div>
+            <div class="card-content">
+              <div class="card-title">项目想法</div>
+              <div class="card-text">快速记录功能需求...</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">🔗</div>
+            <div class="card-content">
+              <div class="card-title">Vue.js 官方文档</div>
+              <div class="card-text">vuejs.org</div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-icon">✓</div>
+            <div class="card-content">
+              <div class="card-title">今日待办</div>
+              <div class="card-text">3 个待完成任务</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右侧文案 -->
+      <div class="text-content">
+        <h1 class="main-title">侧边栏便签本</h1>
+        <p class="sub-title">always by your side</p>
+
+        <div class="features">
+          <div class="feature-item">
+            <div class="feature-dot"></div>
+            <span class="typing-text">Markdown 一键预览</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-dot"></div>
+            <span>智能链接识别</span>
+          </div>
+          <div class="feature-item">
+            <div class="feature-dot"></div>
+            <span>跨设备自动同步</span>
+          </div>
+        </div>
+
+        <button class="cta-button">Chrome 扩展</button>
+      </div>
+    </div>
+
+    <!-- 结束画面 -->
+    <div class="end-screen">
+      <div class="end-logo">Slidememos</div>
+      <div class="end-tagline">always by your side</div>
+      <div class="end-cta">chrome.google.com/webstore</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    按 <kbd>R</kbd> 重新播放 | 按 <kbd>Space</kbd> 暂停/继续
+  </div>
+
+  <script>
+    // 动画控制
+    let isPaused = false;
+    const container = document.querySelector('.video-container');
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'r' || e.key === 'R') {
+        // 重新播放：移除并重新添加容器
+        const parent = container.parentNode;
+        const clone = container.cloneNode(true);
+        parent.removeChild(container);
+        parent.appendChild(clone);
+        location.reload();
+      }
+
+      if (e.key === ' ') {
+        e.preventDefault();
+        isPaused = !isPaused;
+        if (isPaused) {
+          document.querySelectorAll('*').forEach(el => {
+            el.style.animationPlayState = 'paused';
+          });
+        } else {
+          document.querySelectorAll('*').forEach(el => {
+            el.style.animationPlayState = 'running';
+          });
+        }
+      }
+    });
+
+    // 自动循环播放
+    setTimeout(() => {
+      if (confirm('动画已结束，是否重新播放？')) {
+        location.reload();
+      }
+    }, 12000);
+  </script>
+</body>
+</html>

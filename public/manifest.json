@@ -11,7 +11,25 @@
     "scripting"
   ],
   "action": {
-    "default_title": "Open Slidememos"
+    "default_title": "Open Slidememos",
+    "default_icon": {
+      "16": "icons/icon-light-16.png",
+      "32": "icons/icon-light-32.png",
+      "48": "icons/icon-light-48.png",
+      "128": "icons/icon-light-128.png"
+    },
+    "theme_icons": [
+      {
+        "light": "icons/icon-light-16.png",
+        "dark": "icons/icon-dark-16.png",
+        "size": 16
+      },
+      {
+        "light": "icons/icon-light-32.png",
+        "dark": "icons/icon-dark-32.png",
+        "size": 32
+      }
+    ]
   },
   "side_panel": {
     "default_path": "sidepanel.html"
@@ -21,9 +39,9 @@
     "type": "module"
   },
   "icons": {
-    "16": "icons/icon16.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
+    "16": "icons/icon-light-16.png",
+    "48": "icons/icon-light-48.png",
+    "128": "icons/icon-light-128.png"
   },
   "author": "Slidememos Team",
   "homepage_url": "https://github.com/yourusername/slidememos"

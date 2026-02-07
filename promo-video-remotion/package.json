@@ -1,0 +1,18 @@
+{
+  "name": "promo-video-remotion",
+  "version": "1.0.0",
+  "description": "Slidememos promo video with Remotion",
+  "scripts": {
+    "start": "remotion studio",
+    "build": "remotion render Video out/video.mp4 --jpeg-quality=100 --crf=10",
+    "build:hd": "remotion render Video out/video-hd.mp4 --jpeg-quality=100 --crf=8 --width=1920 --height=1200",
+    "upgrade": "remotion upgrade"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@remotion/cli": "^4.0.419",
+    "remotion": "^4.0.419"
+  }
+}

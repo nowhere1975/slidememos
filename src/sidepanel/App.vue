@@ -20,6 +20,71 @@ const showAbout = ref(false)
 
 onMounted(async () => {
   await loadMemos()
+
+  // Load demo data if empty
+  if (memos.value.length === 0) {
+    const demoMemos: Memo[] = [
+      {
+        id: 'demo-001',
+        title: '项目API配置',
+        content: 'Base URL: https://api.example.com/v1\nAPI Key: sk_live_51Hx9...\nTimeout: 30s',
+        type: 'text',
+        metadata: {},
+        createdAt: Date.now() - 86400000 * 3,
+        updatedAt: Date.now() - 86400000 * 2
+      },
+      {
+        id: 'demo-002',
+        title: 'Vue.js - 渐进式 JavaScript 框架',
+        content: 'https://vuejs.org/',
+        type: 'url',
+        metadata: {
+          url: 'https://vuejs.org/',
+          favicon: 'https://vuejs.org/logo.svg'
+        },
+        createdAt: Date.now() - 86400000 * 2,
+        updatedAt: Date.now() - 86400000 * 2
+      },
+      {
+        id: 'demo-003',
+        title: '今日待办',
+        content: '## 工作任务\n\n- [ ] 完成项目文档\n- [x] 代码审查\n- [ ] 发布更新',
+        type: 'text',
+        metadata: { isMarkdown: true },
+        createdAt: Date.now() - 86400000,
+        updatedAt: Date.now() - 86400000
+      },
+      {
+        id: 'demo-004',
+        title: 'GitHub',
+        content: 'https://github.com/',
+        type: 'url',
+        metadata: {
+          url: 'https://github.com/',
+          favicon: 'https://github.com/favicon.ico'
+        },
+        createdAt: Date.now() - 43200000,
+        updatedAt: Date.now() - 43200000
+      },
+      {
+        id: 'demo-005',
+        title: '灵感记录',
+        content: '侧边栏笔记的核心价值：不跳出当前页面，随时记录碎片信息。',
+        type: 'text',
+        metadata: {},
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      }
+    ]
+    for (const memo of demoMemos) {
+      await addMemo(memo)
+    }
+    // Set collapsed state for demo
+    await chrome.storage.session.set({
+      collapsed_memos: ['demo-002', 'demo-004']
+    })
+  }
+
   document.addEventListener('keydown', handleGlobalKeydown)
 })
 
